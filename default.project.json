@@ -1,0 +1,18 @@
+{
+  "name": "CompositeAnimation",
+  "tree": {
+    "$className": "DataModel",
+
+    "Workspace":{
+      "$path": "src/Workspace",
+      "$ignoreUnknownInstances": true
+    },
+    "ReplicatedStorage": {
+      "$ignoreUnknownInstances": true,
+      "CompositeAnimation" :{
+        "$path": "src/CompositeAnimation",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
+}
