@@ -99,76 +99,77 @@ local demoAnimation = CompositeAnimation.new({
     demoCKS2
 })
 ------------------------------------------------------------
--- for i = 1, 3 do
---     print('play')
---     task.spawn(function()
---         demoTween:Play()
---     end)
---     task.wait(3)
---     print('pause')
---     demoTween:Pause()
---     task.wait(3)
---     print('continue')
---     task.spawn(function()
---         demoTween:Continue()
---     end)
---     task.wait(3)
---     print('cancel')
---     demoTween:Cancel()
--- end
+print('---------------Tween----------------')
+for i = 1, 3 do
+    print('play')
+    task.spawn(function()
+        demoTween:Play()
+    end)
+    task.wait(3)
+    print('pause')
+    demoTween:Pause()
+    task.wait(3)
+    print('continue')
+    task.spawn(function()
+        demoTween:Continue()
+    end)
+    task.wait(3)
+    print('cancel')
+    demoTween:Cancel()
+end
 --------------------------------------------------------------
 -- demoKeyframeSequence.Looped = true
 -- print('play')
 -- demoKeyframeSequence:Play()
 ---------------------------------------------------
--- for i = 1, 3 do
---     print('play')
---     demoKeyframeSequence:Play()
+for i = 1, 3 do
+    print('play')
+    demoKeyframeSequence:Play()
 
---     task.wait(demoKeyframeSequence.Length / 2)
---     demoKeyframeSequence:Pause()
---     print('pause!')
---     task.wait(3)
---     print('continue')
---     demoKeyframeSequence:Continue()
+    task.wait(demoKeyframeSequence.Length / 2)
+    demoKeyframeSequence:Pause()
+    print('pause!')
+    task.wait(3)
+    print('continue')
+    demoKeyframeSequence:Continue()
 
---     demoKeyframeSequence.Completed:Wait()
---     print('completed, isPlaying', demoKeyframeSequence.IsPlaying)
---     print('cancel')
---     demoKeyframeSequence:Cancel()
--- end
+    demoKeyframeSequence.Completed:Wait()
+    print('completed, isPlaying', demoKeyframeSequence.IsPlaying)
+    print('cancel')
+    demoKeyframeSequence:Cancel()
+end
 ---------------------------------------------------
--- for i = 1, 3 do
---     print('play')
---     demoCKS:Play()
+for i = 1, 3 do
+    print('play')
+    demoCKS:Play()
 
---     task.wait(demoCKS.Length / 2)
---     demoCKS:Pause()
---     print('pause!')
---     task.wait(3)
---     print('continue')
---     demoCKS:Continue()
+    task.wait(demoCKS.Length / 2)
+    demoCKS:Pause()
+    print('pause!')
+    task.wait(3)
+    print('continue')
+    demoCKS:Continue()
 
---     demoCKS.Completed:Wait()
---     print('cancel')
---     demoCKS:Cancel()
--- end
+    demoCKS.Completed:Wait()
+    print('cancel')
+    demoCKS:Cancel()
+end
 ---------------------------------------------------
--- for i = 1, 3 do
---     print('play')
---     demoCKS2:Play()
+for i = 1, 3 do
+    print('play')
+    demoCKS2:Play()
 
---     task.wait(demoCKS2.Length / 2)
---     demoCKS2:Pause()
---     print('pause!')
---     task.wait(1.5)
---     print('continue')
---     demoCKS2:Continue()
+    task.wait(demoCKS2.Length / 2)
+    demoCKS2:Pause()
+    print('pause!')
+    task.wait(1.5)
+    print('continue')
+    demoCKS2:Continue()
 
---     demoCKS2.Completed:Wait()
---     print('cancel')
---     demoCKS2:Cancel()
--- end
+    demoCKS2.Completed:Wait()
+    print('cancel')
+    demoCKS2:Cancel()
+end
 ---------------------------------------------------
 for i = 1, 3 do
     print('play')
@@ -185,26 +186,3 @@ for i = 1, 3 do
     print('cancel')
     demoAnimation:Cancel()
 end
-
-
--- local compositeKeyframeSequences1 = {
---     CompositeKeyframeSequence.new(
---         {
---             KeyframeSequence.new(model.Part, {
---                 Keyframe.new(0, 'Position', model.Part.Position),
---                 Keyframe.new(3, 'Position', model.Part.Position + Vector3.new(0, 10, 0))
---             }, {
---                 Transition.new(0, 1)
---             })
---         }
---     )
--- }
-
--- local compositeAnimation1 = CompositeAnimation.new(compositeKeyframeSequences1)
-
--- while true do
---     compositeAnimation1:Play()
---     task.wait(5)
---     compositeAnimation1:Cancel()
---     task.wait(1)
--- end

@@ -11,9 +11,11 @@ export type KeyframeSequence = {
 
 local _prototype = {}
 _prototype.__index = _prototype
-_prototype.ClassName = '_prototype'
+_prototype.ClassName = 'KeyframeSequence'
+_prototype.Looped = false
+_prototype.Speed = 1
 
-function _prototype.new(obj:Instance, keyframes, transitions, middles, looped)
+function _prototype.new(obj:Instance, keyframes, transitions, middles, looped, speed)
     local self = setmetatable({}, _prototype)
 
     assert(#keyframes - #transitions == 1, "Keyframes Length must be greater 1 than Transitions Length!")
@@ -25,6 +27,8 @@ function _prototype.new(obj:Instance, keyframes, transitions, middles, looped)
     self.Tweens = {}
     self.Length = self.Keyframes[#self.Keyframes].TimePosition
     self.Looped = looped
+    self.Speed = speed
+
     self.Completed = Signal.new()
     self.ReachedEnd = Signal.new()
     -- khởi tạo các Tween tương ứng
@@ -41,12 +45,12 @@ function _prototype.new(obj:Instance, keyframes, transitions, middles, looped)
     return self
 end
 
-function _prototype:Play()
+function _prototype:Play(speed)
     if self.IsPlaying then return end
     -- đặt lại giá trị về ban đầu
     self.Current = self.Tweens[1]
     self._idx = 1
-    self:Continue()
+    self:Continue(speed)
 end
 
 function _prototype:Pause()
@@ -60,7 +64,8 @@ function _prototype:Pause()
     end
 end
 
-function _prototype:Continue()
+function _prototype:Continue(speed)
+    self._Speed = speed or self.Speed
     self.IsPlaying = true
     -- tạo mới luồng Play mới và đóng cũ nếu có
     if self.PlayThread then
@@ -75,9 +80,9 @@ function _prototype:Continue()
                 self._idx = i
                 self.Current = self.Tweens[i]
                 if self.Current.Paused then
-                    self.Current:Continue()
+                    self.Current:Continue(self._Speed * self.Current.Speed)
                 else
-                    self.Current:Play()
+                    self.Current:Play(self._Speed * self.Current.Speed)
                 end
             end
             self.ReachedEnd:Fire()

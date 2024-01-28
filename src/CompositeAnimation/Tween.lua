@@ -14,8 +14,12 @@ local Tween:Tween = {}
 Tween.__index = Tween
 Tween.ClassName = 'Tween'
 Tween.IsPlaying = false
+Tween.Looped = false
+Tween.Speed = 1
 
-function Tween.new(obj, start_props, end_props, length, transition, middles_props)
+local ANIMATION_SMOOTHNESS = 0.03
+
+function Tween.new(obj, start_props, end_props, length, transition, middles_props, looped, speed)
     local self = setmetatable({}, Tween)
 
     self.Object = obj
@@ -24,6 +28,8 @@ function Tween.new(obj, start_props, end_props, length, transition, middles_prop
     self.Length = length
     self.Transition = transition
     self.Middles = middles_props or {}
+    self.Looped = looped
+    self.Speed = speed
 
     self.Points = {}
     self.Points[1] = self.Start
@@ -65,27 +71,34 @@ function Tween:SetProps(props)
     end
 end
 -- phát sự nới lỏng
-function Tween:Play()
+function Tween:Play(speed)
     if self.IsPlaying then return end
     self._t = 0
-    self:Continue()
+    self:Continue(speed)
 end
 -- tạm dừng
 function Tween:Pause()
     self.IsPlaying = false
     self.Paused = true
 end
-function Tween:Continue()
+function Tween:Continue(speed)
+    self._Speed = speed or self.Speed
     self._s = tick() - (self._t)
     self.IsPlaying = true
     self.Paused = false
-    while self.IsPlaying do
-        task.wait()
-        self._t = tick() - self._s
-        if self._t > self.Length then break end
-        local props = self:GetProps(self._t)
-        self:SetProps(props)
-    end
+    repeat
+        while self.IsPlaying do
+            task.wait(ANIMATION_SMOOTHNESS)
+            self._t = (tick() - self._s) * self._Speed
+            if self._t > self.Length then break end
+            local props = self:GetProps(self._t)
+            self:SetProps(props)
+        end
+        if self.Looped then
+            self._s = tick()
+            self:Cancel()
+        end
+    until not self.Looped
     self.IsPlaying = false
 end
 -- kết thúc

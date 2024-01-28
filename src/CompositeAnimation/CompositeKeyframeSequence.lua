@@ -8,12 +8,16 @@ export type CompositeKeyframeSequence = {
 local _prototype = {}
 _prototype.__index = _prototype
 _prototype.ClassName = 'CompositeKeyframeSequence'
+_prototype.Looped = false
+_prototype.Speed = 1
 
-function _prototype.new(keyframesequences)
+function _prototype.new(keyframesequences, looped, speed)
     local self = setmetatable({}, _prototype)
 
     self._KS = keyframesequences
     self._KS = self._KS
+    self.Looped = looped
+    self.Speed = speed
     -- tính toán độ dài
     self.Length = 0
     for _, ks in self._KS do
@@ -26,12 +30,13 @@ function _prototype.new(keyframesequences)
     return self
 end
 
-function _prototype:Play()
+function _prototype:Play(speed)
+    self._Speed = speed or self.Speed
     if self.IsPlaying then return end
     self.IsPlaying = true
     self._Completed = {}
     for i, ks in self._KS do
-        ks:Play()
+        ks:Play(self._Speed * ks.Speed)
         local cn
         cn = ks.Completed:Once(function()
             self._Completed[i] = cn
@@ -39,7 +44,7 @@ function _prototype:Play()
                 self.IsPlaying = false
                 self.ReachedEnd:Fire()
                 if self.Looped then
-                    self:Play()
+                    self:Play(self._Speed * ks.Speed)
                 else
                     self.Completed:Fire()
                 end
@@ -55,10 +60,11 @@ function _prototype:Pause()
     end
 end
 
-function _prototype:Continue()
+function _prototype:Continue(speed)
+    self._Speed = speed or self.Speed
     self.IsPlaying = true
     for _, ks in self._KS do
-        ks:Continue()
+        ks:Continue(self._Speed * ks.Speed)
     end
 end
 

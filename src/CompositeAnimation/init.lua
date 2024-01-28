@@ -13,12 +13,15 @@ _prototype.__index = _prototype
 _prototype.ClassName = 'CompositeAnimation'
 _prototype.Speed = 1
 _prototype.Looped = false
+_prototype.Speed = 1
 
-function _prototype.new(composite_keyframe_sequences)
+function _prototype.new(composite_keyframe_sequences, looped, speed)
     local self = setmetatable({}, _prototype)
 
     self.CompositeKeyframeSequences = composite_keyframe_sequences
     self._CKS = self.CompositeKeyframeSequences
+    self.Looped = looped
+    self.Speed = speed
     -- tính toán độ dài
     self.Length = 0
     for _, cks in self._CKS do
@@ -31,12 +34,13 @@ function _prototype.new(composite_keyframe_sequences)
     return self
 end
 
-function _prototype:Play()
+function _prototype:Play(speed)
+    self._Speed = speed or self.Speed
     if self.IsPlaying then return end
     self.IsPlaying = true
     self._Completed = {}
     for i, cks in self._CKS do
-        cks:Play()
+        cks:Play(self._Speed * cks.Speed)
         local cn
         cn = cks.Completed:Once(function()
             self._Completed[i] = cn
@@ -44,7 +48,7 @@ function _prototype:Play()
                 self.IsPlaying = false
                 self.ReachedEnd:Fire()
                 if self.Looped then
-                    self:Play()
+                    self:Play(self._Speed * cks.Speed)
                 else
                     self.Completed:Fire()
                 end
@@ -60,10 +64,11 @@ function _prototype:Pause()
     end
 end
 
-function _prototype:Continue()
+function _prototype:Continue(speed)
+    self._Speed = speed or self.Speed
     self.IsPlaying = true
     for _, cks in self._CKS do
-        cks:Continue()
+        cks:Continue(self._Speed * cks.Speed)
     end
 end
 

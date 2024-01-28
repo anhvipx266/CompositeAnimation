@@ -52,6 +52,19 @@ Tổng cộng, KeyframeSequence quản lý sự sắp xếp thời gian của c�
 
 VD: sin: sin(x * pi / 2), sin In: 1 - cos(x * pi / 2)
 
+## Phân tích thiết kế
+
+### Cấu trúc
+
+- Cấu trúc phức tạp dần từ Tween: cấu từ 2 Keyframe, 1 Transition
+- Phức tạp dần: Tween -> KeyframeSequence, CompositeKeyframeSequence, CompositeAnimation. Bản chất tương tự nhau, tương tự AnimationTrack
+- *Riêng Tween: là đối tượng không tạo thêm luồng khi phát*
+
+### Tốc độ
+
+- Thành phần con lấy tốc độ bằng **chuỗi tích** *thành phần cha trở lên*!
+- Được đặt lại về ban đầu khi *chạm kết* hoặc **hủy**
+
 ## Thiết kế
 
 ### Keyframe
