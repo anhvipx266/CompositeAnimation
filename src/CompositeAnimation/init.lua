@@ -10,6 +10,9 @@ export type CompositeAnimation = {
 
 local _prototype = {}
 _prototype.__index = _prototype
+_prototype.__tostring = function(self)
+    return `{string.rep('-', 35)} {self.ClassName} {string.rep('-', 35)}`
+end
 _prototype.ClassName = 'CompositeAnimation'
 _prototype.Speed = 1
 _prototype.Looped = false

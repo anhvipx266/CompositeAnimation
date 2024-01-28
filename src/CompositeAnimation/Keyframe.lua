@@ -11,6 +11,9 @@ export type Keyframe = {
 local Keyframe = {}
 Keyframe.__index = Keyframe
 Keyframe.ClassName = "Keyframe"
+Keyframe.__tostring = function(self)
+    return `{string.rep('-', 35)} {self.ClassName} {string.rep('-', 35)}`
+end
 --/default props
 Keyframe.Props = {}
 Keyframe.TimePosition = 0

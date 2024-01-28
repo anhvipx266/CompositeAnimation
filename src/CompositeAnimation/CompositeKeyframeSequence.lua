@@ -7,6 +7,9 @@ export type CompositeKeyframeSequence = {
 
 local _prototype = {}
 _prototype.__index = _prototype
+_prototype.__tostring = function(self)
+    return `{string.rep('-', 35)} {self.ClassName} {string.rep('-', 35)}`
+end
 _prototype.ClassName = 'CompositeKeyframeSequence'
 _prototype.Looped = false
 _prototype.Speed = 1

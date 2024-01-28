@@ -6,6 +6,9 @@ export type Transition = {
 
 local Transition = {}
 Transition.__index = Transition
+Transition.__tostring = function(self)
+    return `{string.rep('-', 35)} {self.ClassName} {string.rep('-', 35)}`
+end
 Transition.ClassName = 'Transition'
 
 function Transition.new(time_start, time_end, time_function, lerp)

@@ -99,7 +99,7 @@ local demoAnimation = CompositeAnimation.new({
     demoCKS2
 })
 ------------------------------------------------------------
-print('---------------Tween----------------')
+print(demoTween)
 for i = 1, 3 do
     print('play')
     task.spawn(function()
@@ -122,6 +122,7 @@ end
 -- print('play')
 -- demoKeyframeSequence:Play()
 ---------------------------------------------------
+print(demoKeyframeSequence)
 for i = 1, 3 do
     print('play')
     demoKeyframeSequence:Play()
@@ -139,6 +140,7 @@ for i = 1, 3 do
     demoKeyframeSequence:Cancel()
 end
 ---------------------------------------------------
+print(demoCKS)
 for i = 1, 3 do
     print('play')
     demoCKS:Play()
@@ -155,6 +157,7 @@ for i = 1, 3 do
     demoCKS:Cancel()
 end
 ---------------------------------------------------
+print(demoCKS2)
 for i = 1, 3 do
     print('play')
     demoCKS2:Play()
@@ -171,6 +174,7 @@ for i = 1, 3 do
     demoCKS2:Cancel()
 end
 ---------------------------------------------------
+print(demoAnimation)
 for i = 1, 3 do
     print('play')
     demoAnimation:Play()
@@ -186,3 +190,4 @@ for i = 1, 3 do
     print('cancel')
     demoAnimation:Cancel()
 end
+print('>>>>>>>>>>>>>>>>>>>>>>>>>Demo finished!')

@@ -12,6 +12,9 @@ export type Tween = {
 
 local Tween:Tween = {}
 Tween.__index = Tween
+Tween.__tostring = function(self)
+    return `{string.rep('-', 35)} {self.ClassName} {string.rep('-', 35)}`
+end
 Tween.ClassName = 'Tween'
 Tween.IsPlaying = false
 Tween.Looped = false

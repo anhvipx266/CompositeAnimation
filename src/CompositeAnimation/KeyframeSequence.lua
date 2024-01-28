@@ -11,6 +11,9 @@ export type KeyframeSequence = {
 
 local _prototype = {}
 _prototype.__index = _prototype
+_prototype.__tostring = function(self)
+    return `{string.rep('-', 35)} {self.ClassName} {string.rep('-', 35)}`
+end
 _prototype.ClassName = 'KeyframeSequence'
 _prototype.Looped = false
 _prototype.Speed = 1

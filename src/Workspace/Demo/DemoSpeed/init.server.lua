@@ -102,7 +102,7 @@ local demoAnimation = CompositeAnimation.new({
 -- demoTween.Looped = true
 -- demoTween:Play()
 -----------------------------
-print('------------------Tween---------------')
+print(demoTween)
 for i = 1, 3 do
     print('play')
     -- task.spawn(function()
@@ -125,7 +125,7 @@ end
 -- print('play')
 -- demoKeyframeSequence:Play()
 ---------------------------------------------------
-print('------------------KeyframeSequence---------------')
+print(demoKS)
 for i = 1, 3 do
     print('play')
     demoKS:Play(i ^ 1.2)
@@ -143,7 +143,7 @@ for i = 1, 3 do
     demoKS:Cancel()
 end
 ---------------------------------------------------
-print('------------------CompositeKeyframeSequence---------------')
+print(demoCKS)
 for i = 1, 3 do
     print('play')
     demoCKS:Play(i ^ 1.3)
@@ -160,7 +160,7 @@ for i = 1, 3 do
     demoCKS:Cancel()
 end
 ---------------------------------------------------
-print('------------------CompositeKeyframeSequence---------------')
+print(demoCKS2)
 for i = 1, 3 do
     print('play')
     demoCKS2:Play(i ^ 1.3)
@@ -177,7 +177,7 @@ for i = 1, 3 do
     demoCKS2:Cancel()
 end
 ---------------------------------------------------
-print('------------------CompositeAnimation---------------')
+print(demoAnimation)
 for i = 1, 3 do
     print('play')
     demoAnimation:Play(i ^ 1.3)
