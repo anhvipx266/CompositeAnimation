@@ -9,6 +9,11 @@ export type Tween = {
     Transition:Transition.Transition,
     Middles:{any}
 }
+-- value, origin, alpha, time, length, reverse
+local _propFunction = function(v, ori, alpha, t, len, rev)
+    return ori * v
+end
+_propFunction = function(v, ori, alpha, t, len, rev) return ori * v end
 
 local Tween:Tween = {}
 Tween.__index = Tween
@@ -23,7 +28,7 @@ Tween.Reverse = false
 
 local ANIMATION_SMOOTHNESS = 0.03
 
-function Tween.new(obj, start_props, end_props, length, transition, middles_props, loop, speed, reverse)
+function Tween.new(obj, start_props, end_props, length, transition, middles_props, loop, speed, reverse, propFunctions)
     local self = setmetatable({}, Tween)
 
     self.Object = obj
@@ -36,6 +41,9 @@ function Tween.new(obj, start_props, end_props, length, transition, middles_prop
     self.Speed = speed
     self.Reverse = reverse
 
+    self.PropFunctions = propFunctions or {}
+    self.OriginProps = {}
+
     self.Points = {}
     self.Points[1] = self.Start
     for _, props in self.Middles do
@@ -44,12 +52,13 @@ function Tween.new(obj, start_props, end_props, length, transition, middles_prop
     table.insert(self.Points, self.End)
 
     self.Transition:InitLerp(self.Start)
+    self:InitSetProps(self.Start)
 
     return self
 end
 -- lấy thông tin giá trị theo thời gian
 function Tween:GetProps(t:number, reverse:boolean)
-    local alpha = self.Transition:GetAlpha(t / self.Length)
+    self._alpha = self.Transition:GetAlpha(t / self.Length)
     -- nội suy chuỗi điểm
     local points = self.Points
     -- nghịch đảo chuỗi điểm nếu cần
@@ -60,8 +69,8 @@ function Tween:GetProps(t:number, reverse:boolean)
             points[len - i + 1] = self.Points[i]
         end
     end
-    if alpha == 0 then return points[1] end
-    if alpha == 1 then return points[#self.Points] end
+    if self._alpha == 0 then return points[1] end
+    if self._alpha == 1 then return points[#self.Points] end
     
     repeat
         local currentPoints = {}
@@ -70,7 +79,7 @@ function Tween:GetProps(t:number, reverse:boolean)
             currentPoints[i] = {}
             for k, v in points[i] do
                 local v2 = points[i + 1][k]
-                currentPoints[i][k] = self.Transition.Lerp[k](v, v2, alpha)
+                currentPoints[i][k] = self.Transition.Lerp[k](v, v2, self._alpha)
             end
         end
 
@@ -79,14 +88,32 @@ function Tween:GetProps(t:number, reverse:boolean)
     return points[1]
 end
 
-function Tween:SetProps(props)
+function Tween:SetProps(props, reverse)
     for k, v in props do
-        self.Object[k] = v
+        self.Object[k] = self.PropFunctions[k](v, self.OriginProps[k], self._alpha, self._t, self.Length, reverse)
+    end
+end
+
+function Tween:InitSetProps(props)
+    for k, _v in props do
+        if self.PropFunctions[k] then continue end
+        local tp = typeof(_v)
+        if tp == "boolean" or tp == 'number' then
+            self.PropFunctions[k] = function(v, ori, alpha, t, len, rev) return v end
+        elseif tp == 'CFrame' then
+            self.PropFunctions[k] = function(v, ori, alpha, t, len, rev) return ori * v end
+        elseif tp == 'Vector3' or tp == 'Vector2' then
+            self.PropFunctions[k] = function(v, ori, alpha, t, len, rev) return ori + v end
+        else
+            self.PropFunctions[k] = function(v, ori, alpha, t, len, rev) return v end
+        end
     end
 end
 -- phát sự nới lỏng
 function Tween:Play(speed, reverse)
     if self.IsPlaying then return end
+    -- ghi nhớ thông tin gốc
+    for k, v in self.Start do self.OriginProps[k] = self.Object[k] end
     self._t = 0
     -- số vòng còn lại, dừng khi số vòng chạm -1, hoặc vô hạn khi nhỏ hơn -1
     self._loop = self.Loop
@@ -99,26 +126,27 @@ function Tween:Pause()
 end
 
 function Tween:GoForward()
-    local props
+    local props, reverse
     if self.Reverse then
         if self._t > self.Length * 2 then return true end
         if self._t <= self.Length then
             props = self:GetProps(self._t)
         else
             props = self:GetProps(self._t - self.Length, self.Reverse)
+            reverse = true
         end
     else
         if self._t > self.Length then return true end
         props = self:GetProps(self._t)
     end
-    self:SetProps(props)
+    self:SetProps(props, reverse)
 end
 -- chỉ có chiều nghịch và time > Length
 function Tween:GoReverse()
     local props
     if self._t > self.Length * 2 then return true end
     props = self:GetProps(self._t - self.Length, true)
-    self:SetProps(props)
+    self:SetProps(props, true)
 end
 
 function Tween:Continue(speed, reverse)

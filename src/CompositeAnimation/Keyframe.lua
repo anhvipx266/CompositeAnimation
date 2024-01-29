@@ -18,13 +18,14 @@ end
 Keyframe.Props = {}
 Keyframe.TimePosition = 0
 
-function Keyframe.new(time_position:number, prop:string, value, maker)
+function Keyframe.new(time_position:number, prop:string, value, maker, propFunction)
 	local self = setmetatable({}, Keyframe)
 	assert(time_position >= 0, "TimePosition must be greater or equal 0!")
 	
 	self.TimePosition = time_position
 	self.Prop = prop
 	self.Value = value
+	self.PropFunction = propFunction
 
 	if maker then self.Reached = Signal.new() end
 	

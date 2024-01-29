@@ -74,6 +74,12 @@ VD: sin: sin(x * pi / 2), sin In: 1 - cos(x * pi / 2)
 
 - Khi được xác định - true, Tween sẽ cố gắng đưa ngược thông tin trở lại trạng thái ban đầu và gấp đôi độ dài của nó
 
+### Đặt thông tin thuộc tính - set prop
+
+- Cung cấp khả năng tính toán chuẩn cho các dạng số, bool, color, vv
+- Và loại Bù như Postion, CFrame
+- Sự tùy chỉnh tạo ra hành vi cực kì khó đoán, nhưng cũng mang tính mở cao
+
 ## Thiết kế
 
 ### Keyframe

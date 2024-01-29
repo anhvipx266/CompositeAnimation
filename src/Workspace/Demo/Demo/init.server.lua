@@ -14,6 +14,12 @@ if not rs:IsClient() then
 end
 
 local tweenModel = workspace.Demo:WaitForChild'TweenModel'
+local easyFunctions = {
+	Position = function(x) return x end,
+	Transparency = function(x) return x end,
+	Color = function(x) return x end,
+	Size = function(x) return x end,
+}
 print("init Demo Tween")
 -- demo Tween
 local demoTween = Tween.new(
@@ -31,7 +37,7 @@ local demoTween = Tween.new(
             Position = tweenModel.Part.Position + Vector3.new(0, 5, 5),
             Transparency = .8
         }
-    }
+    }, nil, nil, nil, easyFunctions
 )
 print("init demoKeyframeSequence")
 local demoKeyframeSequence = KeyframeSequence.new(

@@ -43,7 +43,10 @@ function _prototype.new(obj:Instance, keyframes, transitions, middles, loop, spe
             [startKeyframe.Prop] = startKeyframe.Value
         }, {
             [endKeyframe.Prop] = endKeyframe.Value
-        }, endKeyframe.TimePosition - startKeyframe.TimePosition, self.Transitions[i], self.Middles[i])
+        }, endKeyframe.TimePosition - startKeyframe.TimePosition, self.Transitions[i], self.Middles[i], nil, nil, nil,
+        {
+            [startKeyframe.Prop] = startKeyframe.PropFunction
+        })
     end
     
     return self
