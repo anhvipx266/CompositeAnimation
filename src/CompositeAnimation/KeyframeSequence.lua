@@ -18,7 +18,7 @@ _prototype.ClassName = 'KeyframeSequence'
 _prototype.Loop = 0
 _prototype.Speed = 1
 
-function _prototype.new(obj:Instance, keyframes, transitions, middles, loop, speed)
+function _prototype.new(obj:Instance, keyframes, transitions, middles, loop, speed, reverse)
     local self = setmetatable({}, _prototype)
 
     assert(#keyframes - #transitions == 1, "Keyframes Length must be greater 1 than Transitions Length!")
@@ -31,6 +31,7 @@ function _prototype.new(obj:Instance, keyframes, transitions, middles, loop, spe
     self.Length = self.Keyframes[#self.Keyframes].TimePosition
     self.Loop = loop
     self.Speed = speed
+    self.Reverse = reverse
 
     self.Completed = Signal.new()
     self.ReachedEnd = Signal.new()
@@ -48,13 +49,13 @@ function _prototype.new(obj:Instance, keyframes, transitions, middles, loop, spe
     return self
 end
 
-function _prototype:Play(speed)
+function _prototype:Play(speed, reverse)
     if self.IsPlaying then return end
     -- đặt lại giá trị về ban đầu
     self.Current = self.Tweens[1]
     self._idx = 1
     self._loop = self.Loop
-    self:Continue(speed)
+    self:Continue(speed, reverse)
 end
 
 function _prototype:Pause()
@@ -68,8 +69,9 @@ function _prototype:Pause()
     end
 end
 
-function _prototype:Continue(speed)
+function _prototype:Continue(speed, reverse)
     self._Speed = speed or self.Speed
+    reverse = if self.Reverse ~= nil then self.Reverse else reverse
     self.IsPlaying = true
     -- tạo mới luồng Play mới và đóng cũ nếu có
     if self.PlayThread then
@@ -84,9 +86,9 @@ function _prototype:Continue(speed)
                 self._idx = i
                 self.Current = self.Tweens[i]
                 if self.Current.Paused then
-                    self.Current:Continue(self._Speed * self.Current.Speed)
+                    self.Current:Continue(self._Speed * self.Current.Speed, reverse)
                 else
-                    self.Current:Play(self._Speed * self.Current.Speed)
+                    self.Current:Play(self._Speed * self.Current.Speed, reverse)
                 end
             end
             self._loop -= 1

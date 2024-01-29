@@ -70,6 +70,10 @@ VD: sin: sin(x * pi / 2), sin In: 1 - cos(x * pi / 2)
 - Quy ước mặc định 0
 - *Quy ước -1 là lặp vô hạn*, còn lại lặp số Loop lần
 
+### Nghịch đảo - reverse
+
+- Khi được xác định - true, Tween sẽ cố gắng đưa ngược thông tin trở lại trạng thái ban đầu và gấp đôi độ dài của nó
+
 ## Thiết kế
 
 ### Keyframe

@@ -31,7 +31,7 @@ local demoTween = Tween.new(
 			Position = tweenModel.Part.Position + Vector3.new(0, 5, 5),
 			Transparency = .8
 		}
-	}
+	}, 0, 1, true
 )
 print("init demoKeyframeSequence")
 local demoKS = KeyframeSequence.new(
@@ -51,7 +51,7 @@ local demoKS = KeyframeSequence.new(
 				Position = tweenModel.Part.Position + Vector3.new(0, -3, 10)
 			}
 		}
-	}
+	}, 0, 1, true
 )
 local demoKS2 = KeyframeSequence.new(
 	tweenModel.Part, {
@@ -60,7 +60,7 @@ local demoKS2 = KeyframeSequence.new(
 	},
 	{
 		Transition.new(0, 1)
-	}, nil
+	}, nil, 0, 1, true
 )
 local demoKS3 = KeyframeSequence.new(
 	tweenModel.Ball, {
@@ -71,7 +71,7 @@ local demoKS3 = KeyframeSequence.new(
 	{
 		Transition.new(0, 1),
 		Transition.new(0, 1)
-	}, nil
+	}, nil, 0, 1, true
 )
 local demoKS4 = KeyframeSequence.new(
 	tweenModel.Ball, {
@@ -82,22 +82,22 @@ local demoKS4 = KeyframeSequence.new(
 	{
 		Transition.new(0, 1),
 		Transition.new(0, 1)
-	}, nil
+	}, nil, 0, 1, true
 )
 print("init demo Composite KeyframeSequence")
 local demoCKS = CompositeKeyframeSequence.new({
 	demoKS,
 	demoKS2
-})
+}, 0, 1, true)
 local demoCKS2 = CompositeKeyframeSequence.new({
 	demoKS3,
 	demoKS4
-})
+}, 0, 1, true)
 print("init demo Composite Animation")
 local demoAnimation = CompositeAnimation.new({
 	demoCKS,
 	demoCKS2
-})
+}, 0, 1, true)
 ------------------------------------------------------------
 -- demoTween.Looped = true
 -- demoTween:Play()
@@ -105,53 +105,53 @@ print('>>>>>>>>>>>>>Start Demo Reverse and Loop!')
 -----------------------------------------------------
 print(demoTween)
 print('play')
-demoTween.Loop = 4
+demoTween.Loop = 2
 task.spawn(function()
 	demoTween:Play()
 end)
-task.wait(demoTween.Length * 3)
+task.wait(demoTween.Length * 6)
 
 print('stop')
-demoTween:Stop()
+-- demoTween:Stop()
 demoTween.Loop = 0
 ---------------------------------------------------
 print(demoKS)
-demoKS.Loop = 4
+demoKS.Loop = 2
 print('play')
 demoKS:Play()
-task.wait(demoKS.Length * 3)
+task.wait(demoKS.Length * 6)
 print('completed, isPlaying', demoKS.IsPlaying)
 print('stop')
-demoKS:Stop()
+-- demoKS:Stop()
 demoKS.Loop = 0
 ---------------------------------------------------
 print(demoCKS)
-demoCKS.Loop = 4
+demoCKS.Loop = 2
 print('play')
 demoCKS:Play()
 
-task.wait(demoCKS.Length * 3)
+task.wait(demoCKS.Length * 6)
 print('stop')
-demoCKS:Stop()
+-- demoCKS:Stop()
 demoCKS.Loop = 0
 ---------------------------------------------------
 print(demoCKS2)
-demoCKS2.Loop = 4
+demoCKS2.Loop = 2
 print('play')
 demoCKS2:Play()
 
-task.wait(demoCKS2.Length * 3)
+task.wait(demoCKS2.Length * 6)
 print('stop')
-demoCKS2:Stop()
+-- demoCKS2:Stop()
 demoCKS2.Loop = 0
 ---------------------------------------------------
 print(demoAnimation)
-demoAnimation.Loop = 4
+demoAnimation.Loop = 2
 print('play', demoAnimation.Loop)
 demoAnimation:Play()
 
-task.wait(demoAnimation.Length * 3)
+task.wait(demoAnimation.Length * 6)
 print('stop')
-demoAnimation:Stop()
+-- demoAnimation:Stop()
 demoAnimation.Loop = 0
 print('>>>>>>>>>>>>>>>>>>>>>>>>>Demo finished!')

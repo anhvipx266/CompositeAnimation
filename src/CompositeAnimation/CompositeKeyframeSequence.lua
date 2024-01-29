@@ -14,13 +14,14 @@ _prototype.ClassName = 'CompositeKeyframeSequence'
 _prototype.Loop = 0
 _prototype.Speed = 1
 
-function _prototype.new(keyframesequences, loop, speed)
+function _prototype.new(keyframesequences, loop, speed, reverse)
     local self = setmetatable({}, _prototype)
 
     self._KS = keyframesequences
     self._KS = self._KS
     self.Loop = loop
     self.Speed = speed
+    self.Reverse = reverse
     -- tính toán độ dài
     self.Length = 0
     for _, ks in self._KS do
@@ -33,13 +34,14 @@ function _prototype.new(keyframesequences, loop, speed)
     return self
 end
 
-function _prototype:Play(speed)
+function _prototype:Play(speed, reverse)
     self._loop = self.Loop
-    self:_Play(speed)
+    self:_Play(speed, reverse)
 end
 
-function _prototype:_Play(speed)
+function _prototype:_Play(speed, reverse)
     self._Speed = speed or self.Speed
+    reverse = if self.Reverse ~= nil then self.Reverse else reverse
     if self.IsPlaying then return end
     self.IsPlaying = true
     self._Completed = {}
@@ -53,14 +55,14 @@ function _prototype:_Play(speed)
                 self._loop -= 1
                 self.ReachedEnd:Fire()
                 if self._loop ~= -1 then
-                    self:_Play(self._Speed * ks.Speed)
+                    self:_Play(self._Speed * ks.Speed, reverse)
                 else
                     self.Completed:Fire()
                 end
             end
         end)
         self._cn[i] = cn
-        ks:Play(self._Speed * ks.Speed)
+        ks:Play(self._Speed * ks.Speed, reverse)
     end
 end
 
@@ -69,11 +71,12 @@ function _prototype:Pause()
     for _, ks in self._KS do ks:Pause() end
 end
 
-function _prototype:Continue(speed)
+function _prototype:Continue(speed, reverse)
     self._Speed = speed or self.Speed
+    reverse = if self.Reverse ~= nil then self.Reverse else reverse
     self.IsPlaying = true
     for _, ks in self._KS do
-        ks:Continue(self._Speed * ks.Speed)
+        ks:Continue(self._Speed * ks.Speed, reverse)
     end
 end
 

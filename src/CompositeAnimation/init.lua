@@ -18,13 +18,14 @@ _prototype.Speed = 1
 _prototype.Loop = 0
 _prototype.Speed = 1
 
-function _prototype.new(composite_keyframe_sequences, loop, speed)
+function _prototype.new(composite_keyframe_sequences, loop, speed, reverse)
     local self = setmetatable({}, _prototype)
 
     self.CompositeKeyframeSequences = composite_keyframe_sequences
     self._CKS = self.CompositeKeyframeSequences
     self.Loop = loop
     self.Speed = speed
+    self.Reverse = reverse
     -- tính toán độ dài
     self.Length = 0
     for _, cks in self._CKS do
@@ -37,37 +38,35 @@ function _prototype.new(composite_keyframe_sequences, loop, speed)
     return self
 end
 
-function _prototype:Play(speed)
+function _prototype:Play(speed, reverse)
     self._loop = self.Loop
-    self:_Play(speed)
+    self:_Play(speed, reverse)
 end
 
-function _prototype:_Play(speed)
+function _prototype:_Play(speed, reverse)
     self._Speed = speed or self.Speed
+    reverse = if self.Reverse ~= nil then self.Reverse else reverse
     if self.IsPlaying then return end
     self.IsPlaying = true
     self._Completed = {}
     self._cn = {}
-    print('loop', self._loop)
     for i, cks in self._CKS do
-        print('cks loop', cks.Loop)
         local cn
         cn = cks.Completed:Once(function()
-            print('com', i)
             self._Completed[i] = cn
             if #self._Completed == #self._CKS then
                 self.IsPlaying = false
                 self._loop -= 1
                 self.ReachedEnd:Fire()
                 if self._loop ~= -1 then
-                    self:_Play(self._Speed * cks.Speed)
+                    self:_Play(self._Speed * cks.Speed, reverse)
                 else
                     self.Completed:Fire()
                 end
             end
         end)
         self._cn[i] = cn
-        cks:Play(self._Speed * cks.Speed)
+        cks:Play(self._Speed * cks.Speed, reverse)
     end
 end
 
@@ -76,11 +75,12 @@ function _prototype:Pause()
     for _, cks in self._CKS do cks:Pause() end
 end
 
-function _prototype:Continue(speed)
+function _prototype:Continue(speed, reverse)
     self._Speed = speed or self.Speed
+    reverse = if self.Reverse ~= nil then self.Reverse else reverse
     self.IsPlaying = true
     for _, cks in self._CKS do
-        cks:Continue(self._Speed * cks.Speed)
+        cks:Continue(self._Speed * cks.Speed, reverse)
     end
 end
 

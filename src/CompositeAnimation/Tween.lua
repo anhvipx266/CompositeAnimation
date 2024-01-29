@@ -19,10 +19,11 @@ Tween.ClassName = 'Tween'
 Tween.IsPlaying = false
 Tween.Loop = 0
 Tween.Speed = 1
+Tween.Reverse = false
 
 local ANIMATION_SMOOTHNESS = 0.03
 
-function Tween.new(obj, start_props, end_props, length, transition, middles_props, loop, speed)
+function Tween.new(obj, start_props, end_props, length, transition, middles_props, loop, speed, reverse)
     local self = setmetatable({}, Tween)
 
     self.Object = obj
@@ -33,6 +34,7 @@ function Tween.new(obj, start_props, end_props, length, transition, middles_prop
     self.Middles = middles_props or {}
     self.Loop = loop
     self.Speed = speed
+    self.Reverse = reverse
 
     self.Points = {}
     self.Points[1] = self.Start
@@ -46,12 +48,21 @@ function Tween.new(obj, start_props, end_props, length, transition, middles_prop
     return self
 end
 -- lấy thông tin giá trị theo thời gian
-function Tween:GetProps(t:number)
+function Tween:GetProps(t:number, reverse:boolean)
     local alpha = self.Transition:GetAlpha(t / self.Length)
-    if alpha == 0 then return self.Start end
-    if alpha == 1 then return self.End end
     -- nội suy chuỗi điểm
     local points = self.Points
+    -- nghịch đảo chuỗi điểm nếu cần
+    if reverse then
+        points = {}
+        local len = #self.Points
+        for i = 1, len do
+            points[len - i + 1] = self.Points[i]
+        end
+    end
+    if alpha == 0 then return points[1] end
+    if alpha == 1 then return points[#self.Points] end
+    
     repeat
         local currentPoints = {}
 
@@ -74,19 +85,43 @@ function Tween:SetProps(props)
     end
 end
 -- phát sự nới lỏng
-function Tween:Play(speed)
+function Tween:Play(speed, reverse)
     if self.IsPlaying then return end
     self._t = 0
     -- số vòng còn lại, dừng khi số vòng chạm -1, hoặc vô hạn khi nhỏ hơn -1
     self._loop = self.Loop
-    self:Continue(speed)
+    self:Continue(speed, reverse)
 end
 -- tạm dừng
 function Tween:Pause()
     self.IsPlaying = false
     self.Paused = true
 end
-function Tween:Continue(speed)
+
+function Tween:GoForward()
+    local props
+    if self.Reverse then
+        if self._t > self.Length * 2 then return true end
+        if self._t <= self.Length then
+            props = self:GetProps(self._t)
+        else
+            props = self:GetProps(self._t - self.Length, self.Reverse)
+        end
+    else
+        if self._t > self.Length then return true end
+        props = self:GetProps(self._t)
+    end
+    self:SetProps(props)
+end
+-- chỉ có chiều nghịch và time > Length
+function Tween:GoReverse()
+    local props
+    if self._t > self.Length * 2 then return true end
+    props = self:GetProps(self._t - self.Length, true)
+    self:SetProps(props)
+end
+
+function Tween:Continue(speed, reverse)
     self._Speed = speed or self.Speed
     self._s = tick() - (self._t)
     self.IsPlaying = true
@@ -95,9 +130,11 @@ function Tween:Continue(speed)
         while self.IsPlaying do
             task.wait(ANIMATION_SMOOTHNESS)
             self._t = (tick() - self._s) * self._Speed
-            if self._t > self.Length then break end
-            local props = self:GetProps(self._t)
-            self:SetProps(props)
+            if reverse and self._t > self.Length then
+                if self:GoReverse() then break end
+            else
+                if self:GoForward() then break end
+            end
         end
         self._loop -= 1
         if self._loop ~= -1 then
