@@ -41,7 +41,7 @@ function _prototype.new(obj:Instance, keyframes, transitions, middles, loop, spe
         local endKeyframe = self.Keyframes[i + 1]
         self.Tweens[i] = Tween.new(obj, {
             [startKeyframe.Prop] = startKeyframe.Value
-        }, {
+        }, startKeyframe, endKeyframe, {
             [endKeyframe.Prop] = endKeyframe.Value
         }, endKeyframe.TimePosition - startKeyframe.TimePosition, self.Transitions[i], self.Middles[i], nil, nil, nil,
         {
@@ -56,6 +56,13 @@ function _prototype:Play(speed, reverse)
     if self.IsPlaying then return end
     -- đặt lại giá trị về ban đầu
     self.Current = self.Tweens[1]
+    self._s = tick()
+    self._t = 0
+    local oriProps = {}
+    for k, v in self.Current.Start do
+        oriProps[k] = self.Object[k]
+    end
+    self._oriProps = oriProps
     self._idx = 1
     self._loop = self.Loop
     self:Continue(speed, reverse)
@@ -76,6 +83,7 @@ function _prototype:Continue(speed, reverse)
     self._Speed = speed or self.Speed
     reverse = if self.Reverse ~= nil then self.Reverse else reverse
     self.IsPlaying = true
+    self._s = tick() - self._t
     -- tạo mới luồng Play mới và đóng cũ nếu có
     if self.PlayThread then
         local status = coroutine.status(self.PlayThread)
@@ -88,9 +96,15 @@ function _prototype:Continue(speed, reverse)
             for i = self._idx, #self.Tweens do
                 self._idx = i
                 self.Current = self.Tweens[i]
+                self._t = tick() - self._s
                 if self.Current.Paused then
                     self.Current:Continue(self._Speed * self.Current.Speed, reverse)
                 else
+                    local currentProps = {}
+                    for k, v in self.Current.Start do
+                        currentProps[k] = self.Object[k]
+                    end
+                    self.Current:MakeKeypoints(currentProps, self._oriProps, self._t, self.Length, reverse)
                     self.Current:Play(self._Speed * self.Current.Speed, reverse)
                 end
             end

@@ -28,10 +28,12 @@ Tween.Reverse = false
 
 local ANIMATION_SMOOTHNESS = 0.03
 
-function Tween.new(obj, start_props, end_props, length, transition, middles_props, loop, speed, reverse, propFunctions, seed)
+function Tween.new(obj, startKeyfrane, endKeyframe, start_props, end_props, length, transition, middles_props, loop, speed, reverse, propFunctions, seed)
     local self = setmetatable({}, Tween)
 
     self.Object = obj
+    self.StartKeyframe = startKeyfrane
+    self.EndKeyframe = endKeyframe
     self.Start = start_props
     self.End = end_props
     self.Length = length
@@ -108,6 +110,15 @@ function Tween:InitSetProps(props)
         else
             self.PropFunctions[k] = function(v, ori, alpha, t, len, rev) return v end
         end
+    end
+end
+
+function Tween:MakeKeypoints(currentProps, oriProps, t, len, rev)
+    if self.StartKeyframe.StartFunction then
+        self.Start = self.StartKeyframe.StartFunction(self.StartKeyframe.Props, self.EndKeyframe.Props, self.currentProps, oriProps, t, len, rev, self.Seed)
+    end
+    if self.EndKeyframe.EndFunction then
+        self.End = self.EndKeyframe.StartFunction(self.StartKeyframe.Props, self.EndKeyframe.Props, self.currentProps, oriProps, t, len, rev, self.Seed)
     end
 end
 -- phát sự nới lỏng

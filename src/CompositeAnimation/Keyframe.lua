@@ -8,6 +8,10 @@ export type Keyframe = {
 	Reached:Signal.Signal -- Signal
 }
 
+local propPointFunction = function(_start, _end, v, ori, t, len, rev, seed)
+	return _start
+end
+
 local Keyframe = {}
 Keyframe.__index = Keyframe
 Keyframe.ClassName = "Keyframe"
@@ -18,7 +22,7 @@ end
 Keyframe.Props = {}
 Keyframe.TimePosition = 0
 
-function Keyframe.new(time_position:number, prop:string, value, maker, propFunction)
+function Keyframe.new(time_position:number, prop:string, value, maker, propFunction, startFunctions, endFunctions)
 	local self = setmetatable({}, Keyframe)
 	assert(time_position >= 0, "TimePosition must be greater or equal 0!")
 	
@@ -26,6 +30,8 @@ function Keyframe.new(time_position:number, prop:string, value, maker, propFunct
 	self.Prop = prop
 	self.Value = value
 	self.PropFunction = propFunction
+	self.StartFunctions = startFunctions
+	self.EndFunctions = endFunctions
 
 	if maker then self.Reached = Signal.new() end
 	
