@@ -10,10 +10,10 @@ export type Tween = {
     Middles:{any}
 }
 -- value, origin, alpha, time, length, reverse
-local _propFunction = function(v, ori, alpha, t, len, rev)
+local _propFunction = function(v, ori, alpha, t, len, rev, seed:Random)
     return ori * v
 end
-_propFunction = function(v, ori, alpha, t, len, rev) return ori * v end
+_propFunction = function(v, ori, alpha, t, len, rev, seed:Random) return ori * v end
 
 local Tween:Tween = {}
 Tween.__index = Tween
@@ -28,7 +28,7 @@ Tween.Reverse = false
 
 local ANIMATION_SMOOTHNESS = 0.03
 
-function Tween.new(obj, start_props, end_props, length, transition, middles_props, loop, speed, reverse, propFunctions)
+function Tween.new(obj, start_props, end_props, length, transition, middles_props, loop, speed, reverse, propFunctions, seed)
     local self = setmetatable({}, Tween)
 
     self.Object = obj
@@ -40,6 +40,7 @@ function Tween.new(obj, start_props, end_props, length, transition, middles_prop
     self.Loop = loop
     self.Speed = speed
     self.Reverse = reverse
+    self.Seed = seed or Random.new(tick())
 
     self.PropFunctions = propFunctions or {}
     self.OriginProps = {}
@@ -90,7 +91,7 @@ end
 
 function Tween:SetProps(props, reverse)
     for k, v in props do
-        self.Object[k] = self.PropFunctions[k](v, self.OriginProps[k], self._alpha, self._t, self.Length, reverse)
+        self.Object[k] = self.PropFunctions[k](v, self.OriginProps[k], self._alpha, self._t, self.Length, reverse, self.Seed)
     end
 end
 
