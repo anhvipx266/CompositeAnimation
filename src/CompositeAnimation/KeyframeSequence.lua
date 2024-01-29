@@ -15,10 +15,10 @@ _prototype.__tostring = function(self)
     return `{string.rep('-', 35)} {self.ClassName} {string.rep('-', 35)}`
 end
 _prototype.ClassName = 'KeyframeSequence'
-_prototype.Looped = false
+_prototype.Loop = 0
 _prototype.Speed = 1
 
-function _prototype.new(obj:Instance, keyframes, transitions, middles, looped, speed)
+function _prototype.new(obj:Instance, keyframes, transitions, middles, loop, speed)
     local self = setmetatable({}, _prototype)
 
     assert(#keyframes - #transitions == 1, "Keyframes Length must be greater 1 than Transitions Length!")
@@ -29,7 +29,7 @@ function _prototype.new(obj:Instance, keyframes, transitions, middles, looped, s
     self.Middles = middles or {}
     self.Tweens = {}
     self.Length = self.Keyframes[#self.Keyframes].TimePosition
-    self.Looped = looped
+    self.Loop = loop
     self.Speed = speed
 
     self.Completed = Signal.new()
@@ -53,6 +53,7 @@ function _prototype:Play(speed)
     -- đặt lại giá trị về ban đầu
     self.Current = self.Tweens[1]
     self._idx = 1
+    self._loop = self.Loop
     self:Continue(speed)
 end
 
@@ -88,8 +89,9 @@ function _prototype:Continue(speed)
                     self.Current:Play(self._Speed * self.Current.Speed)
                 end
             end
+            self._loop -= 1
             self.ReachedEnd:Fire()
-        until not self.Looped
+        until self._loop == -1
         self.IsPlaying = false
         self.Completed:Fire()
     end)

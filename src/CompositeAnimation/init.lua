@@ -15,15 +15,15 @@ _prototype.__tostring = function(self)
 end
 _prototype.ClassName = 'CompositeAnimation'
 _prototype.Speed = 1
-_prototype.Looped = false
+_prototype.Loop = 0
 _prototype.Speed = 1
 
-function _prototype.new(composite_keyframe_sequences, looped, speed)
+function _prototype.new(composite_keyframe_sequences, loop, speed)
     local self = setmetatable({}, _prototype)
 
     self.CompositeKeyframeSequences = composite_keyframe_sequences
     self._CKS = self.CompositeKeyframeSequences
-    self.Looped = looped
+    self.Loop = loop
     self.Speed = speed
     -- tính toán độ dài
     self.Length = 0
@@ -38,33 +38,42 @@ function _prototype.new(composite_keyframe_sequences, looped, speed)
 end
 
 function _prototype:Play(speed)
+    self._loop = self.Loop
+    self:_Play(speed)
+end
+
+function _prototype:_Play(speed)
     self._Speed = speed or self.Speed
     if self.IsPlaying then return end
     self.IsPlaying = true
     self._Completed = {}
+    self._cn = {}
+    print('loop', self._loop)
     for i, cks in self._CKS do
-        cks:Play(self._Speed * cks.Speed)
+        print('cks loop', cks.Loop)
         local cn
         cn = cks.Completed:Once(function()
+            print('com', i)
             self._Completed[i] = cn
             if #self._Completed == #self._CKS then
                 self.IsPlaying = false
+                self._loop -= 1
                 self.ReachedEnd:Fire()
-                if self.Looped then
-                    self:Play(self._Speed * cks.Speed)
+                if self._loop ~= -1 then
+                    self:_Play(self._Speed * cks.Speed)
                 else
                     self.Completed:Fire()
                 end
             end
         end)
+        self._cn[i] = cn
+        cks:Play(self._Speed * cks.Speed)
     end
 end
 
 function _prototype:Pause()
     self.IsPlaying = false
-    for _, cks in self._CKS do
-        cks:Pause()
-    end
+    for _, cks in self._CKS do cks:Pause() end
 end
 
 function _prototype:Continue(speed)
@@ -76,16 +85,13 @@ function _prototype:Continue(speed)
 end
 
 function _prototype:Cancel()
-    for _, cks in self._CKS do
-        cks:Cancel()
-    end
+    for _, cks in self._CKS do cks:Cancel() end
 end
 
 function _prototype:Stop()
-    for i, keyframeSequence in self._CKS do
-        keyframeSequence:Stop()
-        if self._Completed[i] then self._Completed[i]:Disconnect() end
-    end
+    self.IsPlaying = false
+    for i, cn in self._Completed do cn:Disconnect() end
+    for i, cks in self._CKS do cks:Stop() end
 end
 
 return _prototype

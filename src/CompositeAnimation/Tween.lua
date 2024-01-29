@@ -17,12 +17,12 @@ Tween.__tostring = function(self)
 end
 Tween.ClassName = 'Tween'
 Tween.IsPlaying = false
-Tween.Looped = false
+Tween.Loop = 0
 Tween.Speed = 1
 
 local ANIMATION_SMOOTHNESS = 0.03
 
-function Tween.new(obj, start_props, end_props, length, transition, middles_props, looped, speed)
+function Tween.new(obj, start_props, end_props, length, transition, middles_props, loop, speed)
     local self = setmetatable({}, Tween)
 
     self.Object = obj
@@ -31,7 +31,7 @@ function Tween.new(obj, start_props, end_props, length, transition, middles_prop
     self.Length = length
     self.Transition = transition
     self.Middles = middles_props or {}
-    self.Looped = looped
+    self.Loop = loop
     self.Speed = speed
 
     self.Points = {}
@@ -77,6 +77,8 @@ end
 function Tween:Play(speed)
     if self.IsPlaying then return end
     self._t = 0
+    -- số vòng còn lại, dừng khi số vòng chạm -1, hoặc vô hạn khi nhỏ hơn -1
+    self._loop = self.Loop
     self:Continue(speed)
 end
 -- tạm dừng
@@ -97,11 +99,12 @@ function Tween:Continue(speed)
             local props = self:GetProps(self._t)
             self:SetProps(props)
         end
-        if self.Looped then
+        self._loop -= 1
+        if self._loop ~= -1 then
             self._s = tick()
             self:Cancel()
         end
-    until not self.Looped
+    until self._loop == -1 or (not self.IsPlaying)
     self.IsPlaying = false
 end
 -- kết thúc

@@ -65,6 +65,11 @@ VD: sin: sin(x * pi / 2), sin In: 1 - cos(x * pi / 2)
 - Thành phần con lấy tốc độ bằng **chuỗi tích** *thành phần cha trở lên*!
 - Được đặt lại về ban đầu khi *chạm kết* hoặc **hủy**
 
+### Lặp lại - loop
+
+- Quy ước mặc định 0
+- *Quy ước -1 là lặp vô hạn*, còn lại lặp số Loop lần
+
 ## Thiết kế
 
 ### Keyframe
