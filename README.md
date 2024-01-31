@@ -1,4 +1,4 @@
-- **version: 1.0.0**
+- **version: 1.0.1**
 ## CompositeAnimation
 - Là tập các lớp giúp hỗ trợ việc tạo và chạy các hoạt ảnh tổng hợp phức tạp.
 
