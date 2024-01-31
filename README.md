@@ -1,29 +1,14 @@
+- **version: 1.0.0**
 ## CompositeAnimation
 - Là tập các lớp giúp hỗ trợ việc tạo và chạy các hoạt ảnh tổng hợp phức tạp.
 
 ## Sử dụng
-- Tạo các VFX Class(nên kế thừa IVFX và lấy mẫu từ Proto) và đặt trong VFXs Folder
-- VFX trong Folder VFXs tự động được đăng ký
+
 ```lua
--- client
-VFXSystem:Make({
-    ClassName = "VFX ClassName",
-    Position = Vector3.new(), -- chỉ định cụ thể hoặc mặc định Camera Position
-    --... -- dữ liệu kèm theo của VFX
-})
+
 ```
 ```lua
--- server
-VFXSystem:Make({
-    ClassName = "VFX ClassName",
-    Position = Vector3.new(), -- bắt buộc chỉ định cụ thể
-    --... -- dữ liệu kèm theo của VFX
-})
+
 ```
-## Cài đặt - Settings
-```lua
-export type VFXSettings = {
-    RenderDistance:number, -- khoảng cách mô phỏng VFX
-    ServerRender:boolean, -- xác định server mô phỏng vfx thay thế cho fire dữ liệu
-}
+
 ```

@@ -39,14 +39,13 @@ function _prototype.new(obj:Instance, keyframes, transitions, middles, loop, spe
     for i = 1, #self.Transitions do
         local startKeyframe = self.Keyframes[i]
         local endKeyframe = self.Keyframes[i + 1]
-        self.Tweens[i] = Tween.new(obj, {
-            [startKeyframe.Prop] = startKeyframe.Value
-        }, startKeyframe, endKeyframe, {
-            [endKeyframe.Prop] = endKeyframe.Value
-        }, endKeyframe.TimePosition - startKeyframe.TimePosition, self.Transitions[i], self.Middles[i], nil, nil, nil,
-        {
-            [startKeyframe.Prop] = startKeyframe.PropFunction
-        })
+        -- self.Tweens[i] = Tween.new(obj, startKeyframe.Props, startKeyframe, endKeyframe,
+        --     endKeyframe.Props, endKeyframe.TimePosition - startKeyframe.TimePosition, self.Transitions[i], self.Middles[i], nil, nil, nil,
+        -- {
+        --     [startKeyframe.Prop] = startKeyframe.PropFunction
+        -- })
+        self.Tweens[i] = Tween.new(obj, startKeyframe, endKeyframe, endKeyframe.TimePosition - startKeyframe.TimePosition,
+            self.Transitions[i], self.Middles[i], nil, nil, nil, startKeyframe.PropFunctions)
     end
     
     return self

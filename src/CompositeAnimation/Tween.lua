@@ -15,7 +15,7 @@ local _propFunction = function(v, ori, alpha, t, len, rev, seed:Random)
 end
 _propFunction = function(v, ori, alpha, t, len, rev, seed:Random) return ori * v end
 
-local Tween:Tween = {}
+local Tween = {}
 Tween.__index = Tween
 Tween.__tostring = function(self)
     return `{string.rep('-', 35)} {self.ClassName} {string.rep('-', 35)}`
@@ -27,15 +27,15 @@ Tween.Speed = 1
 Tween.Reverse = false
 
 local ANIMATION_SMOOTHNESS = 0.03
-
-function Tween.new(obj, startKeyfrane, endKeyframe, start_props, end_props, length, transition, middles_props, loop, speed, reverse, propFunctions, seed)
+--/constructors
+function Tween.new(obj, startKeyfrane, endKeyframe, length, transition, middles_props, loop, speed, reverse, propFunctions, seed)
     local self = setmetatable({}, Tween)
 
     self.Object = obj
     self.StartKeyframe = startKeyfrane
     self.EndKeyframe = endKeyframe
-    self.Start = start_props
-    self.End = end_props
+    self.Start = startKeyfrane.Props
+    self.End = endKeyframe.Props
     self.Length = length
     self.Transition = transition
     self.Middles = middles_props or {}
@@ -58,6 +58,12 @@ function Tween.new(obj, startKeyfrane, endKeyframe, start_props, end_props, leng
     self:InitSetProps(self.Start)
 
     return self
+end
+-- tạo từ tham số đơn giản
+function Tween.fromSimple(obj, start_props, end_props, start_time, length, transition, middles_props, loop, speed, reverse, propFunctions, seed)
+    local startKeyfrane = Keyframe.new(start_time, start_props)
+    local endKeyframe = Keyframe.new(start_time + length, end_props)
+    return Tween.new(obj, startKeyfrane, endKeyframe, length, transition, middles_props, loop, speed, reverse, propFunctions, seed)
 end
 -- lấy thông tin giá trị theo thời gian
 function Tween:GetProps(t:number, reverse:boolean)
@@ -191,7 +197,7 @@ function Tween:Stop()
 end
 -- đưa dữ liệu về ban đầu
 function Tween:Cancel()
-    for k, v in self.Start do
+    for k, v in self.OriginProps do
         self.Object[k] = v
     end
 end

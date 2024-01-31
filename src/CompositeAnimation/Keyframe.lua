@@ -2,7 +2,7 @@ local Signal = require(script.Parent.Signal)
 
 export type Keyframe = {
 	TimePosition:number, -- điểm thời gian của Keyframe, >= 0
-	Prop:string,
+	Props:{[string]:any},
 	Value:any,
 
 	Reached:Signal.Signal -- Signal
@@ -22,14 +22,13 @@ end
 Keyframe.Props = {}
 Keyframe.TimePosition = 0
 
-function Keyframe.new(time_position:number, prop:string, value, maker, propFunction, startFunctions, endFunctions)
+function Keyframe.new(time_position:number, props:{[string]:any}, maker, propFunctions, startFunctions, endFunctions)
 	local self = setmetatable({}, Keyframe)
 	assert(time_position >= 0, "TimePosition must be greater or equal 0!")
 	
 	self.TimePosition = time_position
-	self.Prop = prop
-	self.Value = value
-	self.PropFunction = propFunction
+	self.Props = props
+	self.PropFunctions = propFunctions
 	self.StartFunctions = startFunctions
 	self.EndFunctions = endFunctions
 
