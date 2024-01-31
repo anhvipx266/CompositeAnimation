@@ -60,9 +60,10 @@ function Tween.new(obj, startKeyfrane, endKeyframe, length, transition, middles_
     return self
 end
 -- tạo từ tham số đơn giản
-function Tween.fromSimple(obj, start_props, end_props, start_time, length, transition, middles_props, loop, speed, reverse, propFunctions, seed)
+function Tween.fromSimple(obj, start_props, end_props, start_time, length, ptransition, middles_props, loop, speed, reverse, propFunctions, seed)
     local startKeyfrane = Keyframe.new(start_time, start_props)
     local endKeyframe = Keyframe.new(start_time + length, end_props)
+    local transition = Transition.new(table.unpack(ptransition))
     return Tween.new(obj, startKeyfrane, endKeyframe, length, transition, middles_props, loop, speed, reverse, propFunctions, seed)
 end
 -- lấy thông tin giá trị theo thời gian
