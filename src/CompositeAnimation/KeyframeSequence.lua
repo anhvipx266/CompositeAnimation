@@ -51,6 +51,20 @@ function _prototype.new(obj:Instance, keyframes, transitions, middles, loop, spe
     return self
 end
 
+function _prototype.fromTable(data, obj)
+    obj = data.Obj
+    local keyframes, transitions = {}, {}
+
+    for k, datak in data.Keyframes do
+        keyframes[k] = Keyframe.new(unpack(datak))
+    end
+    for k, datak in data.Transitions do
+        transitions[k] = Transition.new(unpack(datak))
+    end
+
+    return _prototype.new(obj, keyframes, transitions, data.Middles, data.Loop, data.Speed, data.Reverse)
+end
+
 function _prototype:Play(speed, reverse)
     if self.IsPlaying then return end
     -- đặt lại giá trị về ban đầu

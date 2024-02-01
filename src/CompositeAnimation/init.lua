@@ -1,4 +1,7 @@
 local CompositeKeyframeSequence = require(script.CompositeKeyframeSequence)
+local KeyframeSequence = require(script.KeyframeSequence)
+local Keyframe = require(script.Keyframe)
+local Transition = require(script.Transition)
 local Signal = require(script.Signal)
 
 export type CompositeAnimation = {
@@ -36,6 +39,28 @@ function _prototype.new(composite_keyframe_sequences, loop, speed, reverse)
     self.Completed = Signal.new()
 
     return self
+end
+
+function _prototype.fromTable(data, contain)
+    local model = data.Obj or contain
+    local cks = {}
+    for i, datacks in data.Animation do
+        local ks = {}
+        for j, dataks in datacks do
+            local keyframes, transitions = {}, {}
+            local obj = model:FindFirstChild(dataks.Obj, true)
+    
+            for k, datak in dataks.Keyframes do
+                keyframes[k] = Keyframe.new(unpack(datak))
+            end
+            for k, datak in dataks.Transitions do
+                transitions[k] = Transition.new(unpack(datak))
+            end
+            ks[j] = KeyframeSequence.new(obj, keyframes, transitions, unpack(dataks))
+        end
+        cks[i] = CompositeKeyframeSequence.new(ks, unpack(datacks))
+    end
+    return _prototype.new(cks, data.Loop, data.Speed, data.Reverse)
 end
 
 function _prototype:Play(speed, reverse)
