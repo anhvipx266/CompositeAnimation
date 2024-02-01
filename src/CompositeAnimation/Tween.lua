@@ -37,7 +37,7 @@ function Tween.new(obj, startKeyfrane, endKeyframe, length, transition, middles_
     self.Start = startKeyfrane.Props
     self.End = endKeyframe.Props
     self.Length = length
-    self.Transition = transition
+    self.Transition = transition or Transition.new(0, 1)
     self.Middles = middles_props or {}
     self.Loop = loop
     self.Speed = speed
