@@ -144,32 +144,40 @@ function Tween:Play(speed, reverse, oriProps, t, len)
 end
 -- tạm dừng
 function Tween:Pause()
-    self.IsPlaying = false
-    self.Paused = true
+    self.IsPlaying = false; self.Paused = true;
 end
 
 function Tween:GoForward()
-    local props, reverse
+    local props, reverse, br
     if self.Reverse then
-        if self._t > self.Length * 2 then return true end
-        if self._t <= self.Length then
+        if self._t > self.Length * 2 then
+            br = true; props = self:GetProps(self.Length, self.Reverse)
+        elseif self._t <= self.Length then
             props = self:GetProps(self._t)
         else
             props = self:GetProps(self._t - self.Length, self.Reverse)
             reverse = true
         end
     else
-        if self._t > self.Length then return true end
-        props = self:GetProps(self._t)
+        if self._t > self.Length then
+            br = true; props = self:GetProps(self.Length)
+        else
+            props = self:GetProps(self._t)
+        end
     end
     self:SetProps(props, reverse)
+    return br
 end
 -- chỉ có chiều nghịch và time > Length
 function Tween:GoReverse()
-    local props
-    if self._t > self.Length * 2 then return true end
-    props = self:GetProps(self._t - self.Length, true)
+    local props, br
+    if self._t > self.Length * 2 then
+        br = true; props = self:GetProps(self.Length, true);
+    else
+        props = self:GetProps(self._t - self.Length, true)
+    end
     self:SetProps(props, true)
+    return br
 end
 
 function Tween:Continue(speed, reverse)
@@ -196,15 +204,10 @@ function Tween:Continue(speed, reverse)
     self.IsPlaying = false
 end
 -- kết thúc
-function Tween:Stop()
-    self:Pause()
-    self:Cancel()
-end
+function Tween:Stop() self:Pause(); self:Cancel(); end
 -- đưa dữ liệu về ban đầu
 function Tween:Cancel()
-    for k, v in self.OriginProps do
-        self.Object[k] = v
-    end
+    for k, v in self.OriginProps do self.Object[k] = v end
 end
 
 return Tween
