@@ -100,7 +100,8 @@ end
 
 function Tween:SetProps(props, reverse)
     for k, v in props do
-        self.Object[k] = self.PropFunctions[k](v, self.OriginProps[k], self._alpha, self._t, self.Length, reverse, self.Seed)
+        self.Object[k] = self.PropFunctions[k](v, self.OriginProps[k], self.Object, self._alpha, self._t,
+            self.Length, reverse, self._oneSeed, self.Seed)
     end
 end
 
@@ -112,7 +113,7 @@ function Tween:InitSetProps(props)
             self.PropFunctions[k] = function(v, ori, alpha, t, len, rev) return v end
         elseif tp == 'CFrame' then
             self.PropFunctions[k] = function(v, ori, alpha, t, len, rev) return ori * v end
-        elseif tp == 'Vector3' or tp == 'Vector2' then
+        elseif (tp == 'Vector3' or tp == 'Vector2') and k ~= 'Size' then
             self.PropFunctions[k] = function(v, ori, alpha, t, len, rev) return ori + v end
         else
             self.PropFunctions[k] = function(v, ori, alpha, t, len, rev) return v end
@@ -131,6 +132,7 @@ end
 -- phát sự nới lỏng
 function Tween:Play(speed, reverse)
     if self.IsPlaying then return end
+    self._oneSeed = self.Seed:NextNumber()
     -- ghi nhớ thông tin gốc
     for k, v in self.Start do self.OriginProps[k] = self.Object[k] end
     self._t = 0
