@@ -72,9 +72,7 @@ function _prototype:Play(speed, reverse)
     self._s = tick()
     self._t = 0
     local oriProps = {}
-    for k, v in self.Current.Start do
-        oriProps[k] = self.Object[k]
-    end
+    for k, v in self.Current.Start do oriProps[k] = self.Object[k] end
     self._oriProps = oriProps
     self._idx = 1
     self._loop = self.Loop
@@ -117,8 +115,7 @@ function _prototype:Continue(speed, reverse)
                     for k, v in self.Current.Start do
                         currentProps[k] = self.Object[k]
                     end
-                    self.Current:MakeKeypoints(currentProps, self._oriProps, self._t, self.Length, reverse)
-                    self.Current:Play(self._Speed * self.Current.Speed, reverse)
+                    self.Current:Play(self._Speed * self.Current.Speed, reverse, currentProps, self._oriProps, self._t, self.Length, reverse)
                 end
             end
             self._loop -= 1

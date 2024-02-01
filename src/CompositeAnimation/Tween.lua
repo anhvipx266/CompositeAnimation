@@ -123,18 +123,20 @@ end
 
 function Tween:MakeKeypoints(currentProps, oriProps, t, len, rev)
     if self.StartKeyframe.StartFunction then
-        self.Start = self.StartKeyframe.StartFunction(self.StartKeyframe.Props, self.EndKeyframe.Props, self.currentProps, oriProps, t, len, rev, self.Seed)
+        self.Start = self.StartKeyframe.StartFunction(self.StartKeyframe.Props, self.EndKeyframe.Props, currentProps, oriProps, t, len, rev, self.Seed)
     end
     if self.EndKeyframe.EndFunction then
-        self.End = self.EndKeyframe.StartFunction(self.StartKeyframe.Props, self.EndKeyframe.Props, self.currentProps, oriProps, t, len, rev, self.Seed)
+        self.End = self.EndKeyframe.StartFunction(self.StartKeyframe.Props, self.EndKeyframe.Props, currentProps, oriProps, t, len, rev, self.Seed)
     end
 end
 -- phát sự nới lỏng
-function Tween:Play(speed, reverse)
+function Tween:Play(speed, reverse, oriProps, t, len)
     if self.IsPlaying then return end
     self._oneSeed = self.Seed:NextNumber()
     -- ghi nhớ thông tin gốc
     for k, v in self.Start do self.OriginProps[k] = self.Object[k] end
+    -- sinh điểm đầu và cuối nếu có
+    self:MakeKeypoints(self.OriginProps, oriProps or self.OriginProps, t or 0, len or self.Length, reverse or self.Reverse)
     self._t = 0
     -- số vòng còn lại, dừng khi số vòng chạm -1, hoặc vô hạn khi nhỏ hơn -1
     self._loop = self.Loop
